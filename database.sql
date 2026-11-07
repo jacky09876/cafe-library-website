@@ -1,0 +1,23 @@
+CREATE DATABASE IF NOT EXISTS cafe_library CHARACTER SET utf8mb4;
+USE cafe_library;
+CREATE TABLE IF NOT EXISTS orders (
+  id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(80) NOT NULL, phone VARCHAR(20) NOT NULL,
+  type VARCHAR(20) NOT NULL, table_no VARCHAR(6) DEFAULT '', note VARCHAR(300) DEFAULT '', items TEXT NOT NULL, total INT NOT NULL,
+  pay VARCHAR(10) NULL, paid TINYINT(1) NOT NULL DEFAULT 0, paid_at DATETIME NULL, printed TINYINT(1) NOT NULL DEFAULT 0,
+  status ENUM('new','preparing','ready','completed','cancelled') NOT NULL DEFAULT 'new',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(40) NOT NULL, stars TINYINT NOT NULL,
+  text VARCHAR(500) NOT NULL, visible TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Upgrade for an older database. Safe to run again, and works on both MySQL and MariaDB
+-- (plain "ADD COLUMN IF NOT EXISTS" only works on MariaDB, so we check first).
+SET @q = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE orders ADD COLUMN table_no VARCHAR(6) DEFAULT ''''', 'DO 0') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'table_no');
+PREPARE stmt FROM @q; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+SET @q = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE orders ADD COLUMN paid_at DATETIME NULL', 'DO 0') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'paid_at');
+PREPARE stmt FROM @q; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+SET @q = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE orders ADD COLUMN printed TINYINT(1) NOT NULL DEFAULT 0', 'DO 0') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'printed');
+PREPARE stmt FROM @q; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+ALTER TABLE orders MODIFY pay VARCHAR(10) NULL;
