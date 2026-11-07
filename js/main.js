@@ -3,8 +3,8 @@ const CONFIG = {
   name: "The Cafe Library",
   tagline: "Books on every wall. Shakes and mojitos at the table.",
   address: "Add full street address, Vapi, Gujarat",   // TODO
-  phone: "+91 90999 16854",
-  whatsapp: "919099916854",
+  phone: "+91 7096603739",
+  whatsapp: "917096603739",
   hours: [["Monday – Friday", "Add hours"], ["Saturday – Sunday", "Add hours"]], // TODO
   instagram: "#",                                      // TODO: full Instagram URL
   lat: 20.3944172, lng: 72.8933942,
